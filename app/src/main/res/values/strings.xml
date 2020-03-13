@@ -3,7 +3,7 @@
     <string name="action_settings">Settings</string>
 
     <string name="main_btn_start_request">Start request</string>
-    <string name="main_header_10th_Character_request_result">"10th Character request result:\n%s"</string>
-    <string name="main_header_every_10th_Character_request_result">Every 10th Character request\n%s</string>
-    <string name="main_header_word_counter_request">Word counter request\n%s</string>
+    <string name="main_header_10th_Character_request_result">"10th character request"</string>
+    <string name="main_header_every_10th_Character_request_result">Every 10th character request</string>
+    <string name="main_header_word_counter_request">Word counter request</string>
 </resources>

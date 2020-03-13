@@ -20,6 +20,64 @@ class MainViewModel : ViewModel() {
 
     fun startRequests() {
 
+        //fetch data from webpage and show 10th character from the response
+        request10thCharacter()
+
+        //fetch data from webpage and show every 10th (10th, 20th, 30th ....) character from the response
+        requestEvery10thCharacter()
+
+        //fetch data from webpage and show every unique word with its occurrence counter
+        requestWordOccuranceWithCounter()
+    }
+
+    private fun requestWordOccuranceWithCounter() {
+        ApiFactory.TRUE_CALLER_API.getBlogData()
+            .subscribeOn(Schedulers.io())
+            .observeOn(AndroidSchedulers.mainThread())
+            .map { doc: Document -> doc.text().split("\\s+".toRegex()) }
+            .subscribe(object : SingleObserver<List<String>> {
+                override fun onSuccess(responseList: List<String>) {
+                    val frequenciesByFirstChar = responseList.groupingBy { it }.eachCount()
+
+                    val wordCounterMap = StringBuilder()
+                    for (entry in frequenciesByFirstChar.entries) {
+                        wordCounterMap.append(entry)
+                        wordCounterMap.append("\n")
+                    }
+                    truecallerWordCounterRequest.value = wordCounterMap.toString()
+                }
+
+                override fun onSubscribe(d: Disposable) {
+                    truecallerWordCounterRequest.value = "Loading..."
+                }
+
+                override fun onError(e: Throwable) {
+                }
+
+            })
+    }
+
+    private fun request10thCharacter() {
+        ApiFactory.TRUE_CALLER_API.getBlogData()
+            .subscribeOn(Schedulers.io())
+            .observeOn(AndroidSchedulers.mainThread())
+            .map { doc: Document -> doc.text().substring(9, 10) }
+            .subscribe(object : SingleObserver<String> {
+                override fun onSuccess(t: String) {
+                    truecaller10thCharacterRequest.value = t
+                }
+
+                override fun onSubscribe(d: Disposable) {
+                    truecaller10thCharacterRequest.value = "Loading..."
+                }
+
+                override fun onError(e: Throwable) {
+                }
+
+            })
+    }
+
+    private fun requestEvery10thCharacter() {
         ApiFactory.TRUE_CALLER_API.getBlogData()
             .subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
@@ -49,50 +107,5 @@ class MainViewModel : ViewModel() {
                 }
 
             })
-
-        ApiFactory.TRUE_CALLER_API.getBlogData()
-            .subscribeOn(Schedulers.io())
-            .observeOn(AndroidSchedulers.mainThread())
-            .map { doc: Document -> doc.text().substring(9, 10) }
-            .subscribe(object : SingleObserver<String> {
-                override fun onSuccess(t: String) {
-                    truecaller10thCharacterRequest.value = t
-                }
-
-                override fun onSubscribe(d: Disposable) {
-                    truecaller10thCharacterRequest.value = "Loading..."
-                }
-
-                override fun onError(e: Throwable) {
-                }
-
-            })
-
-        ApiFactory.TRUE_CALLER_API.getBlogData()
-            .subscribeOn(Schedulers.io())
-            .observeOn(AndroidSchedulers.mainThread())
-            .map { doc: Document -> doc.text().split("\\s+".toRegex()) }
-            .subscribe(object : SingleObserver<List<String>> {
-                override fun onSuccess(responseList: List<String>) {
-                    val frequenciesByFirstChar = responseList.groupingBy { it }.eachCount()
-
-                    val wordCounterMap = StringBuilder()
-                    for (entry in frequenciesByFirstChar.entries) {
-                        wordCounterMap.append(entry)
-                        wordCounterMap.append("\n")
-                    }
-                    truecallerWordCounterRequest.value = wordCounterMap.toString()
-                }
-
-                override fun onSubscribe(d: Disposable) {
-                    truecallerWordCounterRequest.value = "Loading..."
-                }
-
-                override fun onError(e: Throwable) {
-                }
-
-            })
-
-
     }
 }
